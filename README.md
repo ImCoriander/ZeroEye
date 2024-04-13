@@ -9,3 +9,12 @@
 自动化找白文件，灰梭子好搭档！！！
 
 更多关于本项目的介绍，请前往公众号：**[零攻防](https://mp.weixin.qq.com/s?__biz=MzkyNDUzNjk4MQ==&mid=2247484591&idx=1&sn=50b813e4c626aa967d6c506c4749c032&chksm=c1d51d55f6a294434e27bbcd6dc45268e64ac8a86bc1215c2df9140d350ea2f26ed6d91a2655#rd)**
+
+
+
+# 1.0版本
+存在不足：复制不全,exe路径下，不存在dll！
+
+# 2.0版本
+更新：将exe路径下，只有exe和info两个文件进行剔除，只保留文件夹下存在多个文件的情况！
+
