@@ -3,9 +3,12 @@ import re
 import subprocess
 import shutil
 
+
+
 def create_directory(directory_path):
     try:
         os.makedirs(directory_path, exist_ok=True)
+
     except OSError as e:
         # print(f"创建目录 {directory_path} 失败: {e}")
         pass
@@ -37,15 +40,18 @@ def find_executables(root_dir, is_x64):
             for file in files:
                 if file.endswith(".exe"):
                     executable_path = os.path.join(root, file)
+
                     _x64 = "x64" if is_x64.lower() == "y" else "x86"
                     try:
                         CMD_result = execute_command(f"cd {_x64} && ZeroEye.exe {executable_path}")
+
                         if CMD_result.find("User DLL Name") != -1:
                             results = CMD_result.split("\n")
                             print(executable_path)
                             info_path = f"bin/{_x64}/{clean_filename(file)}".replace(".exe", "")
                             create_directory(info_path)
                             copy_file(executable_path, os.path.join(info_path, file))
+
                             for result in results:
                                 if result.find("User DLL Name") != -1:
                                     Dll_Name = result.replace("User DLL Name: ", "").strip()
@@ -53,6 +59,13 @@ def find_executables(root_dir, is_x64):
                                     copy_file(os.path.join(root, Dll_Name), os.path.join(info_path, clean_dll_name))
                                     with open(f"{info_path}/info.txt", "w") as file:
                                         file.write(f"{root}\n{CMD_result}")
+
+
+                            if len(os.listdir(info_path)) == 2:
+                                shutil.rmtree(info_path)
+                                break
+
+
                     except Exception as e:
                         # print(f"执行命令时出现错误: {e}")
                         pass
@@ -61,6 +74,7 @@ def find_executables(root_dir, is_x64):
         # print(f"遍历文件时出现错误: {e}")
 
 if __name__ == "__main__":
+
     create_directory("bin")
     try:
         root_dir = input("请输入路径：")
