@@ -11,7 +11,6 @@
 
 # 版本介绍：
 
---- 
 以上版本可在Release中获取，将不再在以上基础上更新，完全使用c++完成所有操作！！！
 
 ## 1.0版本
@@ -47,4 +46,7 @@ ZeroEye.exe -i aaa.exe         //判断指定exe是否有劫持的可能
 ```
 
     
-![image.png](https://demo-1317552874.cos.ap-guangzhou.myqcloud.com/Obsidian/20241027183523.png)
+![image](https://github.com/user-attachments/assets/12ac33d7-aacb-477f-b119-51f6fa7c0730)
+
+![image](https://github.com/user-attachments/assets/4ae352c5-5664-4654-be1c-ad005e823f71)
+
