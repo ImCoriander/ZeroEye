@@ -6,23 +6,23 @@ void DisplayHelp() {
 
     std::cout << "Usage: ZeroEye [options]" << std::endl;
     std::cout << "options:" << std::endl;
-    std::cout << "  -h\t°ïÖú" << std::endl;
-    std::cout << "  -i\t<PE  Â·¾¶>\t#ÁĞ³öExeµÄµ¼Èë±í" << std::endl;
-    std::cout << "  -p\t<ÎÄ¼şÄ¿Â¼>\t#×Ô¶¯ËÑË÷ÎÄ¼şÂ·¾¶ÏÂ¿É½Ù³ÖÀûÓÃµÄ°×Ãûµ¥" << std::endl;
-    std::cout << "  -s\t<Ç©ÃûĞ£Ñé>\t#½ö¶ÔÊı×ÖÇ©Ãûexe½øĞĞÌ½²â" << std::endl;
-    std::cout << "  -d\t<Éú³ÉÄ£°å>\t#Éú³ÉdllÄ£°å" << std::endl;
-    std::cout << "  -x\t<Ö¸¶¨¼Ü¹¹>\t#Ö¸¶¨ÏëÒªµÄ¼Ü¹¹£¨86/64£©,Îª¿ÕÔòÉ¨ÃèÁ½ÖÖ¼Ü¹¹" << std::endl;
-    std::cout << "  -g\t<ÅÅ³ıÒÀÀµ>\t#ÅÅ³ıÖ¸¶¨dllµÄ³ÌĞò" << std::endl;
-    std::cout << "  -IM\t<PE  Â·¾¶>\t#²é¿´µ¼Èë±í" << std::endl;
-    std::cout << "  -EX\t<PE  Â·¾¶>\t#²é¿´µ¼³ö±í" << std::endl;
-    std::cout <<  std::endl;
-
+    std::cout << "  -h\t<ä½¿ç”¨å¸®åŠ©>" << std::endl;
+    std::cout << "  -i\t<PE  è·¯å¾„>\t#åˆ—å‡ºExeçš„å¯¼å…¥è¡¨" << std::endl;
+    std::cout << "  -p\t<æ–‡ä»¶ç›®å½•>\t#è‡ªåŠ¨æœç´¢æ–‡ä»¶è·¯å¾„ä¸‹å¯åŠ«æŒåˆ©ç”¨çš„ç™½åå•" << std::endl;
+    std::cout << "  -s\t<ç­¾åæ ¡éªŒ>\t#ä»…å¯¹æ•°å­—ç­¾åexeè¿›è¡Œæ¢æµ‹" << std::endl;
+    std::cout << "  -e\t<ç‹¬ç«‹ EXE>\t#ä»…åˆ—å‡ºç³»ç»Ÿç³»ç»Ÿdllçš„exe" << std::endl;
+    std::cout << "  -d\t<ç”Ÿæˆæ¨¡æ¿>\t#ç”Ÿæˆdllæ¨¡æ¿" << std::endl;
+    std::cout << "  -x\t<æŒ‡å®šæ¶æ„>\t#æŒ‡å®šæƒ³è¦çš„æ¶æ„ï¼ˆ86/64ï¼‰,ä¸ºç©ºåˆ™æ‰«æä¸¤ç§æ¶æ„" << std::endl;
+    std::cout << "  -g\t<æ’é™¤ä¾èµ–>\t#æ’é™¤æŒ‡å®šdllçš„ç¨‹åº" << std::endl;
+    std::cout << "  -IM\t<PE  è·¯å¾„>\t#æŸ¥çœ‹å¯¼å…¥è¡¨" << std::endl;
+    std::cout << "  -EX\t<PE  è·¯å¾„>\t#æŸ¥çœ‹å¯¼å‡ºè¡¨" << std::endl;
     std::cout << "example:" << std::endl;
-    std::cout << "  ZeroEye.exe -i a.exe\t\t\t\t\t#ÏÔÊ¾exeµ¼Èë±í" << std::endl;
-    std::cout << "  ZeroEye.exe -p c:\\\t\t\t\t\t#É¨ÃècÅÌÏÂËùÓĞexe" << std::endl;
-    std::cout << "  ZeroEye.exe -p c:\\ -s -x 64 -g \"api-ms|ucrtbase|crt\"\t#É¨ÃècÅÌÏÂËùÓĞexe,²¢ÇÒ½öÉ¨Ãè64Î»ÓĞÊı×ÖÇ©ÃûµÄ³ÌĞò" << std::endl;
-    std::cout << "  ZeroEye.exe -d a.dll\t\t\t\t\t#¶ÔÖ¸¶¨dllÉú³ÉÄ£°å,´æ·ÅÓëµ±Ç°Â·¾¶" << std::endl;
-    std::cout << "  ZeroEye.exe -IM/-EX a.exe/a.dll\t\t\t#²é¿´µ¼Èë±í/µ¼³ö±í" << std::endl;
+    std::cout << "  ZeroEye.exe -i a.exe\t\t\t\t\t   #æ˜¾ç¤ºexeå¯¼å…¥è¡¨" << std::endl;
+    std::cout << "  ZeroEye.exe -p c:\\\t\t\t\t\t   #æ‰«æcç›˜ä¸‹æ‰€æœ‰exe" << std::endl;
+    std::cout << "  ZeroEye.exe -d a.dll\t\t\t\t\t   #å¯¹æŒ‡å®šdllç”Ÿæˆæ¨¡æ¿,å­˜æ”¾ä¸å½“å‰è·¯å¾„" << std::endl;
+    std::cout << "  ZeroEye.exe -IM/-EX a.exe/a.dll\t\t\t   #æŸ¥çœ‹å¯¼å…¥è¡¨/å¯¼å‡ºè¡¨" << std::endl;
+    std::cout << "  ZeroEye.exe -p c:\\ -s -x 64 -g \"api-ms|ucrtbase|crt\"\t   #æ‰«æcç›˜ä¸‹æ‰€æœ‰exe,å¹¶ä¸”ä»…æ‰«æ64ä½æœ‰æ•°å­—ç­¾åçš„ç¨‹åº" << std::endl;
+    std::cout << "  ZeroEye.exe -p c:\\ -s -x 64 -g \"api-ms|ucrtbase|crt\" -e  #ä¸ä¸Šé¢çš„æ•ˆæœå¤§è‡´ç›¸åŒï¼Œ-eä»…å¯»æ‰¾ä¾èµ–ç³»ç»Ÿdllçš„exe" << std::endl;
 
 }
 int main(int argc, char* argv[]) {
@@ -32,10 +32,10 @@ int main(int argc, char* argv[]) {
    / /   / _ \ | '__|  / _ \  |  _|   | | | |  / _ \
   / /_  |  __/ | |    | (_) | | |___  | |_| | |  __/
  /____|  \___| |_|     \___/  |_____|  \__, |  \___|
-                                       |___/ Ver`3.4              
+                                       |___/ Ver`3.5              
 
     Github:https://github.com/ImCoriander/ZeroEye
-    ¹«ÖÚºÅ£º**Áã¹¥·À**
+    å…¬ä¼—å·ï¼š**é›¶æ”»é˜²**
 )" << std::endl;
     
     auto start = std::chrono::high_resolution_clock::now();
@@ -46,9 +46,10 @@ int main(int argc, char* argv[]) {
     std::map<std::string, std::string> parsedArgs;
 
     bool isSign = false;
+    bool isExe = false;
     int is64 = 0;
     std::vector<std::string> result;
-    // ²ÎÊı½âÎö
+    // å‚æ•°è§£æ
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
         if (arg == "-h") {
@@ -58,7 +59,10 @@ int main(int argc, char* argv[]) {
         else if (arg == "-s") {
             isSign = true;
         }
-        else if (arg == "-i" || arg == "-p" || arg == "-d" || arg == "-x" || arg == "-g" || arg == "-IM" || arg == "-EX" ) {
+        else if (arg == "-e") {
+            isExe = true;
+        }
+        else if (arg == "-i" || arg == "-p" || arg == "-d" || arg == "-x" || arg == "-g" || arg == "-IM" || arg == "-EX") {
             if (i + 1 < argc) {
                 parsedArgs[arg] = argv[++i];
             }
@@ -75,7 +79,8 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    // µ÷¶È¹¦ÄÜ
+
+    // è°ƒåº¦åŠŸèƒ½
     if (parsedArgs.find("-i") != parsedArgs.end()) {
         std::vector<std::string> DllList;
         bool is64Bit;
@@ -105,7 +110,7 @@ int main(int argc, char* argv[]) {
         result = SplitString(value, "|");
     }
     if (parsedArgs.find("-p") != parsedArgs.end()) {
-        getFiles_and_view(parsedArgs["-p"].c_str(), is64, isSign, result);
+        getFiles_and_view(parsedArgs["-p"].c_str(), is64, isSign,isExe, result);
     }
 
     if (parsedArgs.find("-d") != parsedArgs.end()) {
@@ -127,17 +132,17 @@ int main(int argc, char* argv[]) {
         ListExportedFunctions(parsedArgs["-EX"].c_str(), false, Funclist);
     }
 
-    // ¼ÇÂ¼½áÊøÊ±¼ä
+    // è®°å½•ç»“æŸæ—¶é—´
     auto end = std::chrono::high_resolution_clock::now();
 
-    // ¼ÆËãÔËĞĞÊ±¼ä
+    // è®¡ç®—è¿è¡Œæ—¶é—´
     std::chrono::duration<double> duration = end - start;
-    // ½«×ÜÊ±¼ä×ª»»Îª·ÖÖÓºÍÃë
+    // å°†æ€»æ—¶é—´è½¬æ¢ä¸ºåˆ†é’Ÿå’Œç§’
     int minutes = std::chrono::duration_cast<std::chrono::minutes>(duration).count();
     int seconds = std::chrono::duration_cast<std::chrono::seconds>(duration).count() % 60;
 
-    // Êä³öÔËĞĞÊ±¼ä£¨·ÖÃë¸ñÊ½£©
-    std::cout << "\n[*] ÓÃÊ±: " << minutes << "m " << seconds << "s" << std::endl;
+    // è¾“å‡ºè¿è¡Œæ—¶é—´ï¼ˆåˆ†ç§’æ ¼å¼ï¼‰
+    std::cout << "\n[*] ç”¨æ—¶: " << minutes << "m " << seconds << "s" << std::endl;
 
     return 0;
 }
