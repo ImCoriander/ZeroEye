@@ -18,7 +18,7 @@ bool DeleteDirectory(const std::string& path) {
 
     return SHFileOperationA(&fileOp) == 0;
 }
-// ·Ö¸îº¯Êı
+// åˆ†å‰²å‡½æ•°
 std::vector<std::string> SplitString(const std::string& str, const std::string& delimiter) {
     std::vector<std::string> tokens;
     size_t start = 0, end = 0;
@@ -27,7 +27,7 @@ std::vector<std::string> SplitString(const std::string& str, const std::string& 
         tokens.push_back(str.substr(start, end - start));
         start = end + delimiter.length();
     }
-    // Ìí¼Ó×îºóÒ»¸ö²¿·Ö
+    // æ·»åŠ æœ€åä¸€ä¸ªéƒ¨åˆ†
     tokens.push_back(str.substr(start));
     return tokens;
 }
@@ -49,7 +49,7 @@ void EchoFunc(std::string dllFile,std::string txtFile,bool flag) {
 void RenameDirectory(const std::filesystem::path& targetDir, const std::string& newDirName) {
     std::filesystem::path newDirPath = targetDir.parent_path() / newDirName;
 
-    // ÖØÃüÃûÄ¿Â¼
+    // é‡å‘½åç›®å½•
     try {
         if (std::filesystem::exists(targetDir)) {
             std::filesystem::rename(targetDir, newDirPath);
@@ -84,7 +84,7 @@ bool Is_SystemDLL(const char* dllName) {
 }
 
 void ViewImportedDLLs(const char* filePath, std::vector<std::string>& DllList ,bool & is64Bit , int is64) {
-    // ÉèÖÃ´íÎóÄ£Ê½£¬·ÀÖ¹µ¯³ö´íÎóĞÅÏ¢¿ò
+    // è®¾ç½®é”™è¯¯æ¨¡å¼ï¼Œé˜²æ­¢å¼¹å‡ºé”™è¯¯ä¿¡æ¯æ¡†
     SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOOPENFILEERRORBOX);
 
     HANDLE hFile = CreateFileA(filePath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -117,7 +117,7 @@ void ViewImportedDLLs(const char* filePath, std::vector<std::string>& DllList ,b
         return;
     }
 
-    // »ñÈ¡ NT Headers µÄµØÖ·
+    // è·å– NT Headers çš„åœ°å€
     PIMAGE_NT_HEADERS ntHeaders = reinterpret_cast<PIMAGE_NT_HEADERS>(reinterpret_cast<BYTE*>(pMappedFile) + dosHeader->e_lfanew);
     if (ntHeaders->Signature != IMAGE_NT_SIGNATURE) {
         UnmapViewOfFile(pMappedFile);
@@ -128,13 +128,19 @@ void ViewImportedDLLs(const char* filePath, std::vector<std::string>& DllList ,b
     }
 
     is64Bit = (ntHeaders->FileHeader.Machine == IMAGE_FILE_MACHINE_AMD64);
-
+    if (is64Bit && is64 == 2 || (!is64Bit && is64 == 1))
+    {
+        UnmapViewOfFile(pMappedFile);
+        CloseHandle(hMapping);
+        CloseHandle(hFile);
+        return;
+    }
     DWORD importTableRVA;
     if (is64 == 1)
     {
         PIMAGE_NT_HEADERS64 ntHeaders64 = reinterpret_cast<PIMAGE_NT_HEADERS64>(ntHeaders);
         importTableRVA = ntHeaders64->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress;
-
+        
     }
     else if (is64 == 2) {
         PIMAGE_NT_HEADERS32 ntHeaders32 = reinterpret_cast<PIMAGE_NT_HEADERS32>(ntHeaders);
@@ -152,6 +158,7 @@ void ViewImportedDLLs(const char* filePath, std::vector<std::string>& DllList ,b
         }
     }
 
+    
     if (importTableRVA == 0) {
         //std::cerr << "No export table found." << std::endl;
         UnmapViewOfFile(pMappedFile);
@@ -163,22 +170,22 @@ void ViewImportedDLLs(const char* filePath, std::vector<std::string>& DllList ,b
     PIMAGE_IMPORT_DESCRIPTOR importDescriptor = reinterpret_cast<PIMAGE_IMPORT_DESCRIPTOR>(
         reinterpret_cast<BYTE*>(pMappedFile) + importTableRVA);
     while (importDescriptor->Name != NULL) {
-        // ¼ì²é importDescriptor ÊÇ·ñÎªÓĞĞ§Ö¸Õë
+        // æ£€æŸ¥ importDescriptor æ˜¯å¦ä¸ºæœ‰æ•ˆæŒ‡é’ˆ
         if (IsBadReadPtr(importDescriptor, sizeof(IMAGE_IMPORT_DESCRIPTOR))) {
             break;
         }
 
-        // ¼ÆËã DLL Ãû³ÆµÄµØÖ·
+        // è®¡ç®— DLL åç§°çš„åœ°å€
         char* dllName = reinterpret_cast<char*>(reinterpret_cast<BYTE*>(pMappedFile) + importDescriptor->Name);
 
-        // ¼ì²é dllName µÄÓĞĞ§ĞÔ
+        // æ£€æŸ¥ dllName çš„æœ‰æ•ˆæ€§
         if (dllName && !IsBadStringPtrA(dllName, MAX_PATH) && strlen(dllName) > 0) {
-            DllList.push_back(dllName);  // Ö»ÓĞÔÚ dllName ÓĞĞ§Ê±²Å¼ÓÈëÁĞ±í
+            DllList.push_back(dllName);  // åªæœ‰åœ¨ dllName æœ‰æ•ˆæ—¶æ‰åŠ å…¥åˆ—è¡¨
         }
 
         importDescriptor++;
 
-        // ÖÕÖ¹Ìõ¼ş£¬±ÜÃâÔ½½ç
+        // ç»ˆæ­¢æ¡ä»¶ï¼Œé¿å…è¶Šç•Œ
         if (importDescriptor->Characteristics == NULL) {
             break;
         }
@@ -191,44 +198,44 @@ void ViewImportedDLLs(const char* filePath, std::vector<std::string>& DllList ,b
 
 }
 
-// µİ¹é¼ì²é DLL µÄÒÀÀµÏî£¬´¦ÀíËùÓĞ²ã¼¶µÄÒÀÀµÁ´
+// é€’å½’æ£€æŸ¥ DLL çš„ä¾èµ–é¡¹ï¼Œå¤„ç†æ‰€æœ‰å±‚çº§çš„ä¾èµ–é“¾
 void Recursive_CheckDLL(const std::string& basePath, const std::string& dllName, int depth, std::unordered_set<std::string>& checkedDlls) {
-    // ¼ì²éÊÇ·ñÒÑ¾­É¨Ãè¹ı¸Ã DLL£¬±ÜÃâÖØ¸´É¨Ãè
+    // æ£€æŸ¥æ˜¯å¦å·²ç»æ‰«æè¿‡è¯¥ DLLï¼Œé¿å…é‡å¤æ‰«æ
     if (checkedDlls.count(dllName)) return;
     checkedDlls.insert(dllName);
 
-    // ÅĞ¶ÏÊÇ·ñÎªÏµÍ³ DLL
+    // åˆ¤æ–­æ˜¯å¦ä¸ºç³»ç»Ÿ DLL
     if (Is_SystemDLL(dllName.c_str())) {
         std::cout << dllName << std::endl;
         return;
     }
 
-    // Êä³ö·ÇÏµÍ³ DLL Ãû³Æ
+    // è¾“å‡ºéç³»ç»Ÿ DLL åç§°
     SetConsoleColor(FOREGROUND_GREEN);
     std::cout << std::string(depth - 1, '\t') << "[+] " << dllName << std::endl;
     SetConsoleColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 
-    // ¹¹Ôì DLL µÄÍêÕûÂ·¾¶
+    // æ„é€  DLL çš„å®Œæ•´è·¯å¾„
     std::string dllfilePath = basePath + "\\" + dllName;
 
-    // »ñÈ¡¸Ã DLL µÄµ¼ÈëÏîÁĞ±í
+    // è·å–è¯¥ DLL çš„å¯¼å…¥é¡¹åˆ—è¡¨
     bool flag;
     std::vector<std::string> importedDllList;
     ViewImportedDLLs(dllfilePath.c_str(), importedDllList, flag, 0);
 
-    // ±éÀúµ¼ÈëµÄ DLL ÁĞ±í²¢µİ¹é¼ì²é
+    // éå†å¯¼å…¥çš„ DLL åˆ—è¡¨å¹¶é€’å½’æ£€æŸ¥
     for (const auto& importedDll : importedDllList) {
-        Recursive_CheckDLL(basePath, importedDll, depth + 1, checkedDlls);  // Ôö¼Óµİ¹éÉî¶È
+        Recursive_CheckDLL(basePath, importedDll, depth + 1, checkedDlls);  // å¢åŠ é€’å½’æ·±åº¦
     }
 }
 
-// Ö÷º¯Êıµ÷ÓÃ
+// ä¸»å‡½æ•°è°ƒç”¨
 void Exe_Output(std::filesystem::path filename, std::vector<std::string>& DllList) {
     if (DllList.size())
     {
         if (std::filesystem::exists(filename))
         {
-            std::unordered_set<std::string> checkedDlls; // ´æ´¢ÒÑ¼ì²â¹ıµÄ DLL
+            std::unordered_set<std::string> checkedDlls; // å­˜å‚¨å·²æ£€æµ‹è¿‡çš„ DLL
             std::cout << "Imported DLLs:" << std::endl;
             for (const auto& dll : DllList) {
                 Recursive_CheckDLL(filename.parent_path().string(), dll, 1, checkedDlls);
@@ -252,7 +259,7 @@ void File_Output(std::string filePath, std::vector<std::string>& DllList ,bool i
         int iNum = 0;
         bool flag = false;
         for (const auto& dll : DllList) {
-            // Êä³ö½á¹û
+            // è¾“å‡ºç»“æœ
 
             for (const auto& part : result) {
 
@@ -284,7 +291,7 @@ void File_Output(std::string filePath, std::vector<std::string>& DllList ,bool i
             SetConsoleColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
         }
 
-        // »ñÈ¡µ±Ç°½ø³ÌÂ·¾¶
+        // è·å–å½“å‰è¿›ç¨‹è·¯å¾„
         char currentPath[MAX_PATH];
         GetModuleFileNameA(NULL, currentPath, MAX_PATH);
         std::filesystem::path currentDir = std::filesystem::path(currentPath).parent_path();
@@ -295,20 +302,20 @@ void File_Output(std::string filePath, std::vector<std::string>& DllList ,bool i
         std::string ExeDir = std::to_string(iNum) + "-" + path.stem().string();
         if (is64Bit)
         {
-            targetDir = currentDir / "Eyebin" / "x64" / ExeDir;
+            targetDir = currentDir / "Eyebin" /"Dll"/ "x64" / ExeDir;
         }
         else
         {
-            targetDir = currentDir / "Eyebin" / "x86" / ExeDir;
+            targetDir = currentDir / "Eyebin" / "Dll" / "x86" / ExeDir;
         }
-        // ´´½¨Ä¿±êÎÄ¼ş¼Ğ
+        // åˆ›å»ºç›®æ ‡æ–‡ä»¶å¤¹
         if (!std::filesystem::exists(targetDir)) {
             std::filesystem::create_directories(targetDir);
         }
 
-        std::string ExeName = path.filename().string(); // »ñÈ¡ÎÄ¼şÃû
+        std::string ExeName = path.filename().string(); // è·å–æ–‡ä»¶å
         std::filesystem::copy_file(filePath, targetDir / ExeName, std::filesystem::copy_options::overwrite_existing);
-        // ÒÆ¶¯DLLÎÄ¼ş²¢¼ÇÂ¼Ãû³Æ
+        // ç§»åŠ¨DLLæ–‡ä»¶å¹¶è®°å½•åç§°
         std::filesystem::create_directories(targetDir / "infos");
         std::ofstream dllNamesFile(targetDir / "infos" / "Info.txt");
         dllNamesFile << filePath << std::endl;
@@ -318,8 +325,8 @@ void File_Output(std::string filePath, std::vector<std::string>& DllList ,bool i
         for (const auto& dll : DllList) {
 
 
-            std::filesystem::path sourceDllPath = sourceDir / dll; //Ô´ÎÄ¼şÂ·¾¶
-            std::filesystem::path targetDllPath = targetDir / dll; //binÂ·¾¶
+            std::filesystem::path sourceDllPath = sourceDir / dll; //æºæ–‡ä»¶è·¯å¾„
+            std::filesystem::path targetDllPath = targetDir / dll; //binè·¯å¾„
 
             if (!Is_SystemDLL(dll.c_str()))
             {
@@ -328,7 +335,7 @@ void File_Output(std::string filePath, std::vector<std::string>& DllList ,bool i
                     if (std::filesystem::copy_file(sourceDllPath, targetDllPath, std::filesystem::copy_options::overwrite_existing))
                     {
                         std::string txtFile = (targetDir / "infos" / ((std::filesystem::path)dll).stem()).string() + ".txt";
-                        // µ¼³öÄ£°å
+                        // å¯¼å‡ºæ¨¡æ¿
                         EchoFunc(targetDllPath.string().c_str(), txtFile,false);
 
                         std::vector<std::string> DllList1;
@@ -343,7 +350,7 @@ void File_Output(std::string filePath, std::vector<std::string>& DllList ,bool i
                         if (a != 0)
                         {
                             rename = true;
-                            dllNamesFile << "\t[*] ´æÔÚÇ¶Ì×µ÷ÓÃÆäËûdll£¬ÍÆ¼ö²é¿´dllµÄËùÓĞÇ¶Ì×µ÷ÓÃµÄdllÃû³Æ: \n\t[ ZeroEye.exe -i \"Eyebin\\" << (is64Bit ? "x64" : "x86") << "\\" << ExeDir << " #\\" << dll << "\" ]" << std::endl;
+                            dllNamesFile << "\t[*] å­˜åœ¨åµŒå¥—è°ƒç”¨å…¶ä»–dllï¼Œæ¨èæŸ¥çœ‹dllçš„æ‰€æœ‰åµŒå¥—è°ƒç”¨çš„dllåç§°: \n\t[ ZeroEye.exe -i \"Eyebin\\" << (is64Bit ? "x64" : "x86") << "\\" << ExeDir << " #\\" << dll << "\" ]" << std::endl;
                         }
 
                     }
@@ -406,6 +413,71 @@ void File_Output(std::string filePath, std::vector<std::string>& DllList ,bool i
 
 
 }
+void File_Output_exe(std::string filePath, std::vector<std::string>& DllList, std::vector<std::string> result,bool is64Bit) {
+
+    if (DllList.size())
+    {
+        int iNum = 0;
+        bool flag = false;
+        for (const auto& dll : DllList) {
+            // è¾“å‡ºç»“æœ
+
+            for (const auto& part : result) {
+
+                if (dll.find(part) != std::string::npos)
+                {
+                    flag = true;
+                    break;
+                }
+            }
+            if (flag)
+            {
+                break;
+            }
+            if (!Is_SystemDLL(dll.c_str()))
+            {
+                iNum += 1;
+            }
+
+        }
+        if (iNum || flag)
+        {
+            std::cout << filePath << std::endl;
+            return;
+        }
+        else
+        {
+            SetConsoleColor(FOREGROUND_GREEN);
+            std::cout << "[+] " << filePath << std::endl;
+            SetConsoleColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+        }
+        // è·å–å½“å‰è¿›ç¨‹è·¯å¾„
+        char currentPath[MAX_PATH];
+        GetModuleFileNameA(NULL, currentPath, MAX_PATH);
+        std::filesystem::path currentDir = std::filesystem::path(currentPath).parent_path();
+        std::filesystem::path targetDir;
+
+        std::filesystem::path path(filePath);
+        if (is64Bit)
+        {
+            targetDir = currentDir / "Eyebin" / "Exe" / "x64" / std::to_string(DllList.size());
+        }
+        else
+        {
+
+            targetDir = currentDir / "Eyebin" / "Exe" / "x86" / std::to_string(DllList.size());
+        }
+
+        // åˆ›å»ºç›®æ ‡æ–‡ä»¶å¤¹
+        if (!std::filesystem::exists(targetDir)) {
+            std::filesystem::create_directories(targetDir);
+        }
+
+        std::string ExeName = path.filename().string(); // è·å–æ–‡ä»¶å
+        std::filesystem::copy_file(filePath, targetDir / ExeName, std::filesystem::copy_options::overwrite_existing);
+    }
+
+}
 bool hasReadPermission(const std::string& path) {
     struct _stat fileInfo;
     if (_stat(path.c_str(), &fileInfo) != 0) {
@@ -425,9 +497,9 @@ bool hasReadPermission(const std::string& path) {
     }
     return true;
 }
-void getFiles_and_view(const std::string& path,int is64, bool isSign, std::vector<std::string> result) {
+void getFiles_and_view(const std::string& path,int is64, bool isSign, bool isExe, std::vector<std::string> result) {
     if (!hasReadPermission(path)) {
-        return;  // Èç¹ûÃ»ÓĞ·ÃÎÊÈ¨ÏŞ£¬Ö±½Ó·µ»Ø
+        return;  // å¦‚æœæ²¡æœ‰è®¿é—®æƒé™ï¼Œç›´æ¥è¿”å›
     }
 
     intptr_t hFile = 0;
@@ -445,14 +517,14 @@ void getFiles_and_view(const std::string& path,int is64, bool isSign, std::vecto
     GetModuleFileNameA(NULL, currentPath, MAX_PATH);
     do {
         if (fileinfo.attrib & _A_SUBDIR) {
-            // ¹ıÂËµô "." ºÍ ".." Ä¿Â¼
+            // è¿‡æ»¤æ‰ "." å’Œ ".." ç›®å½•
             if (strcmp(fileinfo.name, ".") != 0 && strcmp(fileinfo.name, "..") != 0) {
-                // ÅÅ³ıÒş²ØµÄÏµÍ³Ä¿Â¼£¬ÀıÈç "$Recycle.Bin"
+                // æ’é™¤éšè—çš„ç³»ç»Ÿç›®å½•ï¼Œä¾‹å¦‚ "$Recycle.Bin"
                 if (fileinfo.name[0] != '$') {
                     std::string subdirPath = path + "\\" + fileinfo.name;
                     if (strstr(path.c_str(), "Eyebin") == nullptr)
                     {
-                        getFiles_and_view(subdirPath, is64, isSign, result);
+                        getFiles_and_view(subdirPath, is64, isSign,isExe, result);
                     }
                     
                 }
@@ -466,17 +538,35 @@ void getFiles_and_view(const std::string& path,int is64, bool isSign, std::vecto
                     std::vector<std::string> DllList;
                     bool is64Bit;
                     ViewImportedDLLs(fullPath.c_str(), DllList, is64Bit, is64);
-                    if (isSign)
+
+                    if (isExe)
                     {
-                        if (IsFileSigned(fullPath.c_str())) {
-                            File_Output(fullPath.c_str(), DllList,is64Bit, is64, result);
+
+                        if (isSign)
+                        {
+                            if (IsFileSigned(fullPath.c_str())) {
+                                File_Output_exe(fullPath.c_str(), DllList, result, is64Bit);
+                            }
                         }
+                        else
+                        {
+                            File_Output_exe(fullPath.c_str(), DllList, result, is64Bit);
+                        }
+
                     }
                     else
                     {
-                        File_Output(fullPath.c_str(), DllList,is64Bit, is64, result);
+                        if (isSign)
+                        {
+                            if (IsFileSigned(fullPath.c_str())) {
+                                File_Output(fullPath.c_str(), DllList, is64Bit, is64, result);
+                            }
+                        }
+                        else
+                        {
+                            File_Output(fullPath.c_str(), DllList, is64Bit, is64, result);
+                        }
                     }
-
 
                 }
                 catch (const std::exception& e) {
