@@ -1,7 +1,7 @@
 #include <Windows.h>
 #include <iostream>
-#include <dbghelp.h> // ĞèÒªÁ´½Ó DbgHelp ¿â
-#pragma comment(lib, "dbghelp.lib") // Á´½Ó DbgHelp ¿â
+#include <dbghelp.h> // éœ€è¦é“¾æ¥ DbgHelp åº“
+#pragma comment(lib, "dbghelp.lib") // é“¾æ¥ DbgHelp åº“
 
 
 void SetConsoleColor(int color) {
@@ -9,7 +9,7 @@ void SetConsoleColor(int color) {
     SetConsoleTextAttribute(hConsole, color);
 }
 
-//µ¼³ö±í
+//å¯¼å‡ºè¡¨
 void ListExportedFunctions(const std::string& filePath, bool flag, std::vector<std::string>& Funclist) {
 
     SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOOPENFILEERRORBOX);
@@ -88,14 +88,14 @@ void ListExportedFunctions(const std::string& filePath, bool flag, std::vector<s
     }
 
     int a = 0;
-    char undecoratedName[1024]; // ÓÃÓÚ´æ´¢½âÂëºóµÄ·ûºÅ
+    char undecoratedName[1024]; // ç”¨äºå­˜å‚¨è§£ç åçš„ç¬¦å·
     for (DWORD i = 0; i < exportDirectory->NumberOfNames; i++) {
         char* funcName = reinterpret_cast<char*>(reinterpret_cast<BYTE*>(pMappedFile) + nameRVAArray[i]);
         DWORD funcRVA = funcAddrArray[ordinalArray[i]];
 
-        // ½âÂëĞŞÊÎ·ûºÅ
+        // è§£ç ä¿®é¥°ç¬¦å·
         if (UnDecorateSymbolName(funcName, undecoratedName, sizeof(undecoratedName), UNDNAME_COMPLETE)) {
-            Funclist.push_back(undecoratedName); // ´æ´¢½âÂëºóµÄ·ûºÅ
+            Funclist.push_back(undecoratedName); // å­˜å‚¨è§£ç åçš„ç¬¦å·
             if (!flag) {
                 std::cout << ++a << "\t"
                     << std::setw(40) << std::left << undecoratedName
@@ -105,7 +105,7 @@ void ListExportedFunctions(const std::string& filePath, bool flag, std::vector<s
             }
         }
         else {
-            Funclist.push_back(funcName); // Èç¹û½âÂëÊ§°Ü£¬´æ´¢Ô­Ê¼·ûºÅ
+            Funclist.push_back(funcName); // å¦‚æœè§£ç å¤±è´¥ï¼Œå­˜å‚¨åŸå§‹ç¬¦å·
             if (!flag) {
                 std::cout << ++a << "\t"
                     << std::setw(40) << std::left << funcName
@@ -122,7 +122,7 @@ void ListExportedFunctions(const std::string& filePath, bool flag, std::vector<s
 
     return;
 }
-//µ¼Èë±í
+//å¯¼å…¥è¡¨
 void ListImportedFunctions(const std::string& filePath) {
     SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOOPENFILEERRORBOX);
 
