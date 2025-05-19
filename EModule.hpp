@@ -9,6 +9,7 @@
 #include <thread>
 #include "Sign.hpp"
 #include "IM_EX_Ports.hpp"
+#include "Language.hpp"
 
 bool DeleteDirectory(const std::string& path) {
     SHFILEOPSTRUCTA fileOp = { 0 };
@@ -83,7 +84,7 @@ bool Is_SystemDLL(const char* dllName) {
 
 }
 
-void ViewImportedDLLs(const char* filePath, std::vector<std::string>& DllList ,bool & is64Bit , int is64) {
+void ViewImportedDLLs(const char* filePath, std::vector<std::string>& DllList, bool& is64Bit, int is64, bool& isConsoleApp) {
     // 设置错误模式，防止弹出错误信息框
     SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOOPENFILEERRORBOX);
 
@@ -158,6 +159,15 @@ void ViewImportedDLLs(const char* filePath, std::vector<std::string>& DllList ,b
         }
     }
 
+    // 判断是否为控制台程序
+    if (is64Bit) {
+        PIMAGE_NT_HEADERS64 ntHeaders64 = reinterpret_cast<PIMAGE_NT_HEADERS64>(ntHeaders);
+        isConsoleApp = (ntHeaders64->OptionalHeader.Subsystem == IMAGE_SUBSYSTEM_WINDOWS_CUI);
+    }
+    else {
+        PIMAGE_NT_HEADERS32 ntHeaders32 = reinterpret_cast<PIMAGE_NT_HEADERS32>(ntHeaders);
+        isConsoleApp = (ntHeaders32->OptionalHeader.Subsystem == IMAGE_SUBSYSTEM_WINDOWS_CUI);
+    }
     
     if (importTableRVA == 0) {
         //std::cerr << "No export table found." << std::endl;
@@ -221,7 +231,7 @@ void Recursive_CheckDLL(const std::string& basePath, const std::string& dllName,
     // 获取该 DLL 的导入项列表
     bool flag;
     std::vector<std::string> importedDllList;
-    ViewImportedDLLs(dllfilePath.c_str(), importedDllList, flag, 0);
+    ViewImportedDLLs(dllfilePath.c_str(), importedDllList, flag, 0, flag);
 
     // 遍历导入的 DLL 列表并递归检查
     for (const auto& importedDll : importedDllList) {
@@ -231,27 +241,21 @@ void Recursive_CheckDLL(const std::string& basePath, const std::string& dllName,
 
 // 主函数调用
 void Exe_Output(std::filesystem::path filename, std::vector<std::string>& DllList) {
-    if (DllList.size())
-    {
-        if (std::filesystem::exists(filename))
-        {
-            std::unordered_set<std::string> checkedDlls; // 存储已检测过的 DLL
-            std::cout << "Imported DLLs:" << std::endl;
+    LanguageStrings lang = LanguageManager::GetStrings();
+    
+    if (DllList.size()) {
+        if (std::filesystem::exists(filename)) {
+            std::unordered_set<std::string> checkedDlls;
+            std::cout << lang.importedDlls << std::endl;
             for (const auto& dll : DllList) {
                 Recursive_CheckDLL(filename.parent_path().string(), dll, 1, checkedDlls);
             }
+        } else {
+            std::cout << lang.errorFile << std::endl;
         }
-        else
-        {
-            std::cout << "Error File" << std::endl;
-        }
-
+    } else {
+        std::cout << lang.noImportsFound << std::endl;
     }
-    else
-    {
-        std::cout << "Nof Find Imported DLLs" << std::endl;
-    }
-
 }
 void File_Output(std::string filePath, std::vector<std::string>& DllList ,bool is64Bit,int is64,std::vector<std::string> result) {
     if (DllList.size())
@@ -341,7 +345,7 @@ void File_Output(std::string filePath, std::vector<std::string>& DllList ,bool i
                         std::vector<std::string> DllList1;
                         bool flag1;
                         int a = 0;
-                        ViewImportedDLLs(targetDllPath.string().c_str(), DllList1, flag1, is64);
+                        ViewImportedDLLs(targetDllPath.string().c_str(), DllList1, flag1, is64, flag1);
                         for (const auto& dll1 : DllList1) {
                             if (!Is_SystemDLL(dll1.c_str())) {
                                 a += 1;
@@ -497,7 +501,7 @@ bool hasReadPermission(const std::string& path) {
     }
     return true;
 }
-void getFiles_and_view(const std::string& path,int is64, bool isSign, bool isExe, std::vector<std::string> result) {
+void getFiles_and_view(const std::string& path,int is64,int _isGUi, bool isSign, bool isExe, std::vector<std::string> result) {
     if (!hasReadPermission(path)) {
         return;  // 如果没有访问权限，直接返回
     }
@@ -524,7 +528,7 @@ void getFiles_and_view(const std::string& path,int is64, bool isSign, bool isExe
                     std::string subdirPath = path + "\\" + fileinfo.name;
                     if (strstr(path.c_str(), "Eyebin") == nullptr)
                     {
-                        getFiles_and_view(subdirPath, is64, isSign,isExe, result);
+                        getFiles_and_view(subdirPath, is64, _isGUi,isSign,isExe, result);
                     }
                     
                 }
@@ -537,8 +541,9 @@ void getFiles_and_view(const std::string& path,int is64, bool isSign, bool isExe
                 try {
                     std::vector<std::string> DllList;
                     bool is64Bit;
-                    ViewImportedDLLs(fullPath.c_str(), DllList, is64Bit, is64);
-
+                    bool isGui;
+                    ViewImportedDLLs(fullPath.c_str(), DllList, is64Bit, is64, isGui);
+                    if (_isGUi && isGui) { continue; }
                     if (isExe)
                     {
 

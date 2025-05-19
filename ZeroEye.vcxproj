@@ -157,6 +157,7 @@
   <ItemGroup>
     <ClInclude Include="EModule.hpp" />
     <ClInclude Include="IM_EX_Ports.hpp" />
+    <ClInclude Include="Language.hpp" />
     <ClInclude Include="Sign.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
