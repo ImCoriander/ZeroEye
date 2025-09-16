@@ -354,7 +354,7 @@ void File_Output(std::string filePath, std::vector<std::string>& DllList ,bool i
                         if (a != 0)
                         {
                             rename = true;
-                            dllNamesFile << "\t[*] 存在嵌套调用其他dll，推荐查看dll的所有嵌套调用的dll名称: \n\t[ ZeroEye.exe -i \"Eyebin\\" << (is64Bit ? "x64" : "x86") << "\\" << ExeDir << " #\\" << dll << "\" ]" << std::endl;
+                            dllNamesFile << "\t[*] 存在嵌套调用其他dll，推荐查看dll的所有嵌套调用的dll名称: \n\t[ ZeroEye.exe -i \"Eyebin\\Dll\\" << (is64Bit ? "x64" : "x86") << "\\" << ExeDir << " #\\" << dll << "\" ]" << std::endl;
                         }
 
                     }
@@ -590,4 +590,5 @@ void getFiles_and_view(const std::string& path,int is64,int _isGUi, bool isSign,
 
     _findclose(hFile);
 }
+
 
